@@ -1,0 +1,75 @@
+$black: rgb(15, 15, 15);
+$white: rgb(240, 240, 240);
+
+.Konsole
+{
+    user-select: none;
+
+    a
+    {
+        color: $black;
+        text-decoration: none;
+        border-bottom: 2px solid $black;
+        // padding-bottom: 2px;
+
+        &:hover
+        {
+            border-bottom-style: dashed;
+        }
+    }
+
+    &.dark
+    {
+        color: $white;
+
+        a
+        {
+            color: $white;
+            border-color:  $white;
+        }
+        
+        pre.KonsoleLine:last-of-type span.KonsoleLineText
+        {
+            border-right-color: $white;
+        }
+    }
+
+    
+}
+
+pre.KonsoleLine
+{
+    margin: 10px 0;
+    word-break: break-all;
+    white-space: pre-wrap; // need research on this
+
+    &:last-of-type span.KonsoleLineText
+    {
+        border-right: 10px solid $black;
+        padding-right: 2px;
+        animation: KaretBlink 800ms steps(2) infinite;
+    }
+}
+
+pre.KonsolePara
+{
+    margin: 5px 0;
+}
+
+
+@keyframes KaretBlink {
+    to{
+        // border-right-color: transparent;
+        border:none;
+    }
+}
+
+.KonsoleChoice
+{
+    list-style-type: circle;
+}
+
+.KonsoleChoice li.active
+{
+    list-style-type: disc;
+}
