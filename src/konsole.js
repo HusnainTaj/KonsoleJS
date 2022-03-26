@@ -2,13 +2,12 @@
 // + refactor lambda functions in event listeners so only our listener is removed when using $0.off("keydown")
 
 "use strict";
-
 class KonsoleSettings
 {
-    printLetterInterval = 25;
+    prefix = "$ ";
     animatePrint = true;
+    printLetterInterval = 25;
     registerDefaultKommands = true;
-    prefix = "T:\\>";
 
     konsoleLineMarkup()
     {
@@ -60,7 +59,7 @@ class Konsole
 
         if(!this.elem.length)
         {
-            console.error(`element`, this.konsoleSettings.ElemSelector, "wasnt found.");
+            console.error(`element`, selector, "wasnt found.");
             return;
         }
 
@@ -135,7 +134,7 @@ class Konsole
 
     RegisterKommand(kommand)
     {
-        if(kommand) this.kommands.push(kommand);
+        if(kommand && kommand.name && kommand.description && kommand.func) this.kommands.push(kommand);
     }
 
     awaitKommand()
@@ -191,8 +190,6 @@ class Konsole
                 }
 
             }
-            
-            
         });
     }
 
