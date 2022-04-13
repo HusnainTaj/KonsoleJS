@@ -14,14 +14,33 @@ Checkout my [Portfolio](https://husnaintaj.github.io/Portfolio/) made using  Kon
 > Note: Make sure you include KonsoleJs script after JQuery.
 
 ## Quick Start
-Download and add konsole js and css files to your project.
-```js
-	let konsole = new Konsole("#console");
 
-	await konsole.print("Hello Konsole!");
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Konsole Example</title>
 
-	konsole.awaitKommand();
+    <link rel="stylesheet" href="konsole.min.css">
+</head>
+<body>
+
+    <div id="console"></div>
+
+    <script src="jquery-3.6.0.min.js"></script>
+    <script src="konsole.js"></script>
+    <script>
+		let konsole = new Konsole("#console");
+
+		await konsole.print("Hello Konsole!");
+
+		konsole.awaitKommand();
+	</script>
+</body>
+</html>
 ```
+
+> Note: This example assumes you have downloaded and placed konsole.min.css and konsole.js in the same directory as your html file.
 
 ## Documentation
 ### KonsoleSettings
@@ -51,13 +70,13 @@ Following are the properties you can change.
 ### Kommand
 A Kommand is just an object with following properties
 
-`name`&emsp;&emsp;&emsp;&emsp;- The name of the kommand that is used in konsole to execute it.
 
-`description` - Short description of what the kommand does.
-
-`details`&emsp;&emsp;&ensp;- Detailed information about usage/syntax of a kommand. It is shown when using *help kommandName*.
-
-`func`&emsp;&emsp;&emsp;&emsp;&nbsp;- A function that is executed when user enters the kommand in konsole.
+| Name | Type | description |
+| ------ | ------ | ------ |
+| name | string | The name of the kommand that is used in konsole to execute it. |
+| description | string | Short description of what the kommand does. |
+| details | string | Detailed information about usage/syntax of a kommand. It is shown when using *help kommandName*. |
+| func | string | A function that is executed when user enters the kommand in konsole. |
 
 > Note: All the properties are required except `details` to [Register a Kommand](#registerkommand).
 
@@ -86,7 +105,7 @@ Adds a new [Kommand](#kommand) to valid Kommands List in the Konsole.
 ```
 
 #### awaitKommand
-This method waits for the user to enter a Kommand and then executes it.
+This method lets the user to enter a Kommand and then executes it when enter key is pressed.
 ```js
 	konsole.awaitKommand();
 ```
@@ -105,7 +124,20 @@ If you have set `animatePrint` to `true` in [Konsole Settings](#konsolesettings)
 So basically, if you do `konsole.print("<a href='hello'>Konsole</a>");`, you will not be able to click the link while Konsole is printing.
 
 #### input
+This method will get a string value from user.
+
+```js
+	let age = await konsole.input("How old are you?");
+
+	await konsole.print(`You said: ${age}`);
+```
 #### choice
+This method will show the list of options with the question to the user. The user can select one of the options using arrow keys and press enter to submit.
+```js
+	let selectedOption = await konsole.choice("Which language is the best?", ["C#", "C Sharp", "C++++", "Microsoft Java"]);
+
+	await konsole.print(`You chose: ${selectedOption}`);
+```
 
 ## Known Bugs
 - too many to list rn, ill update this later when the project is stable.
