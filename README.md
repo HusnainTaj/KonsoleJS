@@ -30,12 +30,12 @@ Checkout my [Portfolio](https://husnaintaj.github.io/Portfolio/) made using  Kon
     <script src="jquery-3.6.0.min.js"></script>
     <script src="konsole.js"></script>
     <script>
-		let konsole = new Konsole("#console");
+        let konsole = new Konsole("#console");
 
-		await konsole.print("Hello Konsole!");
+        await konsole.print("Hello Konsole!");
 
-		konsole.awaitKommand();
-	</script>
+        konsole.awaitKommand();
+    </script>
 </body>
 </html>
 ```
@@ -48,14 +48,14 @@ Checkout my [Portfolio](https://husnaintaj.github.io/Portfolio/) made using  Kon
 You can pass an instance of KonsoleSettings class when creating a [Konsole](#konsole) instance to change some default behavior of the Konsole.
 
 ```js
-	let settings = new KonsoleSettings();
-	settings.prefix = "C:\\>";
+    let settings = new KonsoleSettings();
+    settings.prefix = "C:\\>";
 
-	let konsole = new Konsole("#console", settings);
+    let konsole = new Konsole("#console", settings);
 
-	await konsole.print("Hello Konsole!");
+    await konsole.print("Hello Konsole!");
 
-	konsole.awaitKommand();
+    konsole.awaitKommand();
 ```
 
 Following are the properties you can change.
@@ -81,43 +81,59 @@ A Kommand is just an object with following properties
 > Note: All the properties are required except `details` to [Register a Kommand](#registerkommand).
 
 ### Konsole
+The Konsole Class takes 2 arguments.
+1. Query Selector string for the target konsole element
+2. [Konsole Settings](#konsolesettings) object (Optional)
+
+```js
+    let settings = new KonsoleSettings();
+    settings.prefix = "$";
+
+    let konsole = new Konsole("#my-konsole-element", settings);
+
+    await konsole.print("Hello Konsole!");
+
+    konsole.awaitKommand();
+```
+
+
 #### RegisterDefaultKommands
 It will add following 2 Kommands to the Konsole.
 - clear - Empties the Konsole element's html.
 - help - Shows all registered Kommands
 ```js
-	konsole.RegisterDefaultKommands();
+    konsole.RegisterDefaultKommands();
 ```
 You can call this function manually or automatically by setting registerDefaultKommands = true in [Konsole Settings](#konsolesettings).
 
 #### RegisterKommand
 Adds a new [Kommand](#kommand) to valid Kommands List in the Konsole.
 ```js
-	let myKommand = new Kommand("clear", "clears the console.", null, () =>
-		new Promise((resolve, reject)=>
-		{
-			$("#console").html("");
-			resolve();
-		})
-	);
+    let myKommand = new Kommand("clear", "clears the console.", null, () =>
+        new Promise((resolve, reject)=>
+        {
+            $("#console").html("");
+            resolve();
+        })
+    );
 
-	konsole.RegisterKommand(myKommand);
+    konsole.RegisterKommand(myKommand);
 ```
 
 #### awaitKommand
 This method lets the user to enter a Kommand and then executes it when enter key is pressed.
 ```js
-	konsole.awaitKommand();
+    konsole.awaitKommand();
 ```
 
 #### print
 As the name suggests this will output the text/html in the console.
 ```js
-	// printing a single line
-	await konsole.print("Hello Konsole!");
+    // printing a single line
+    await konsole.print("Hello Konsole!");
 
-	// printing multiple lines 
-	await konsole.print("Hello", "Konsole!");
+    // printing multiple lines 
+    await konsole.print("Hello", "Konsole!");
 ```
 If you have set `animatePrint` to `true` in [Konsole Settings](#konsolesettings), and try to print HTML, The Konsole will first *animately* print the html as text and then replace the text with actual html.
 
@@ -127,16 +143,16 @@ So basically, if you do `konsole.print("<a href='hello'>Konsole</a>");`, you wil
 This method will get a string value from user.
 
 ```js
-	let age = await konsole.input("How old are you?");
+    let age = await konsole.input("How old are you?");
 
-	await konsole.print(`You said: ${age}`);
+    await konsole.print(`You said: ${age}`);
 ```
 #### choice
 This method will show the list of options with the question to the user. The user can select one of the options using arrow keys and press enter to submit.
 ```js
-	let selectedOption = await konsole.choice("Which language is the best?", ["C#", "C Sharp", "C++++", "Microsoft Java"]);
+    let selectedOption = await konsole.choice("Which language is the best?", ["C#", "C Sharp", "C++++", "Microsoft Java"]);
 
-	await konsole.print(`You chose: ${selectedOption}`);
+    await konsole.print(`You chose: ${selectedOption}`);
 ```
 
 ## Known Bugs
