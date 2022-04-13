@@ -64,6 +64,7 @@ class Konsole
         }
 
         this.elem.addClass("Konsole");
+        this.elem.attr("tabindex", "0");
 
         // Prevent browser from scrolling when pressing arrow keys or space bar
         window.addEventListener("keydown", function(e) {
@@ -142,6 +143,11 @@ class Konsole
         this.elem.append(this.konsoleSettings.konsoleLineMarkup());
         
         $("body").off("keydown").keydown((e)=>{
+
+            // cancel if other elements like form inputs are focused
+            // if(document.activeElement != document.body || !this.elem.hasClass("active")) return;
+            if(!this.elem.is(":focus")) return;
+
             console.log(e.code);
 
             let lastLine = $(".KonsoleLine:last span.KonsoleLineText");
