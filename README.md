@@ -6,7 +6,7 @@ This project is still under development so many things will break in future upda
 I'm also not doing any versioning.
 
 ## Demo
-Checkout my [Portfolio](https://husnaintaj.github.io/Portfolio/) made using  KonsoleJS
+Checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
 
 ## Dependencies 
 - [Jquery](https://code.jquery.com/jquery-3.6.0.min.js)
@@ -60,7 +60,7 @@ You can pass an instance of KonsoleSettings class when creating a [Konsole](#kon
 
 Following are the properties you can change.
 
-| Name | Default | Type | description |
+| Name | Default | Type | Description |
 | ------ | ------ | ------ | ------ |
 | prefix | "$ " | string | The string shown at the very beginning of a line. |
 | animatePrint | true | bool | Whether to print text letter by letter or all at once. |
@@ -71,7 +71,7 @@ Following are the properties you can change.
 A Kommand is just an object with following properties
 
 
-| Name | Type | description |
+| Name | Type | Description |
 | ------ | ------ | ------ |
 | name | string | The name of the kommand that is used in konsole to execute it. |
 | description | string | Short description of what the kommand does. |
