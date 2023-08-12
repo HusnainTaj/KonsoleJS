@@ -8,12 +8,16 @@ I'm also not doing any versioning.
 ## Demo
 Checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
 
-## Dependencies 
+
+## Quick Start for npm
+You can find it on the [package listing](https://www.npmjs.com/package/@husnain.taj/konsolejs) page.
+
+## Dependencies
 - [Jquery](https://code.jquery.com/jquery-3.6.0.min.js)
 
-> Note: Make sure you include KonsoleJs script after JQuery.
+> Note: Make sure you include KonsoleJs script after JQuery, if you are not using npm.
 
-## Quick Start
+## Quick Start for Web
 
 ```html
 <!DOCTYPE html>

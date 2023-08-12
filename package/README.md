@@ -21,6 +21,8 @@ Checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
     <div id="console"></div>
 
     <script>
+        // This is just the code example
+        // You must use a module bundler like browserify or webpack for this code to work
         import {Konsole, KonsoleSettings, Kommand} from "@husnain.taj/konsolejs";
 
         (async ()=>
