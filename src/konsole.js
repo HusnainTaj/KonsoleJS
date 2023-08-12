@@ -1,4 +1,7 @@
 // TODO:
+// + Events: onPrint, onWrongKommand etc
+// + case insensitive commands option
+// + better konsoleSettings implementation
 // + refactor lambda functions in event listeners so only our listener is removed when using $0.off("keydown")
 "use strict";
 
