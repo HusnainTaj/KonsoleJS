@@ -2,6 +2,8 @@
 // + refactor lambda functions in event listeners so only our listener is removed when using $0.off("keydown")
 "use strict";
 
+const $ = require("jquery");
+
 class KonsoleSettings
 {
     prefix = "$ ";
@@ -53,6 +55,8 @@ class Konsole
 
     constructor(selector, _konsoleSettings = new KonsoleSettings()) 
     {
+        $("body").append(`<style>.Konsole{user-select:none}.Konsole a{color:#0f0f0f;text-decoration:none;border-bottom:2px solid #0f0f0f}.Konsole a:hover{border-bottom-style:dashed}.Konsole.dark{color:#f0f0f0}.Konsole.dark a{color:#f0f0f0;border-color:#f0f0f0}.Konsole.dark pre.KonsoleLine:last-of-type span.KonsoleLineText{border-right-color:#f0f0f0}.Konsole:focus pre.KonsoleLine:last-of-type span.KonsoleLineText{animation:KaretBlink .8s steps(2) infinite}pre.KonsoleLine{margin:10px 0;word-break:break-all;white-space:pre-wrap}pre.KonsoleLine:last-of-type span.KonsoleLineText{border-right:10px solid #0f0f0f;padding-right:2px}pre.KonsolePara{margin:5px 0}@keyframes KaretBlink{to{border:none}}.KonsoleChoice{list-style-type:circle}.KonsoleChoice li.active{list-style-type:disc}`);
+
         this.konsoleSettings = _konsoleSettings;
 
         this.elem = $(selector);
@@ -348,3 +352,5 @@ class Konsole
         });
     }
 };
+
+module.exports = {Konsole, KonsoleSettings, Kommand};

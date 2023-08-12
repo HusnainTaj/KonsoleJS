@@ -1,2 +1,4 @@
 #[Dd]ist/
 .vscode
+test
+node_modules

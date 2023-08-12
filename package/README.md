@@ -8,11 +8,6 @@ I'm also not doing any versioning.
 ## Demo
 Checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
 
-## Dependencies 
-- [Jquery](https://code.jquery.com/jquery-3.6.0.min.js)
-
-> Note: Make sure you include KonsoleJs script after JQuery.
-
 ## Quick Start
 
 ```html
@@ -20,17 +15,16 @@ Checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
 <html lang="en">
 <head>
     <title>Konsole Example</title>
-
-    <link rel="stylesheet" href="konsole.min.css">
 </head>
 <body>
 
     <div id="console"></div>
 
-    <script src="jquery-3.6.0.min.js"></script>
-    <script src="konsole.js"></script>
     <script>
-        (async ()=>{
+        import {Konsole, KonsoleSettings, Kommand} from "@husnain.taj/konsolejs";
+
+        (async ()=>
+        {
             let konsole = new Konsole("#console");
 
             await konsole.print("Hello Konsole!");
@@ -41,9 +35,6 @@ Checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
 </body>
 </html>
 ```
-
-> Note: This example assumes you have downloaded and placed konsole.min.css and konsole.js in the same directory as your html file.
-
 ## Documentation
 ### KonsoleSettings
 
