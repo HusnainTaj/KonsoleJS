@@ -1,9 +1,9 @@
 # KonsoleJS
 A Promise based JavaScript Library for creating console UI on the web.
 
-## Disclaimer
-This project is still under development so many things will break in future updates.
-I'm also not doing any versioning.
+> [!important]
+> This project is still under development so many things will break in future updates.
+> I'm also not doing any versioning at the moment.
 
 ## Demo
 Checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
