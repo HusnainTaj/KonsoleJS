@@ -1,7 +1,7 @@
 # KonsoleJS
 A Promise based JavaScript Library for creating console UI on the web.
 
-> [!important]
+> [!warning]
 > This project is still under development so many things will break in future updates.
 > I'm also not doing any versioning at the moment.
 
