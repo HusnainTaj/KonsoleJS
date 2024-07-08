@@ -1,12 +1,32 @@
 $black: rgb(15, 15, 15);
 $white: rgb(240, 240, 240);
 
+body:has(#konsoleInput:focus)
+{
+    .Konsole
+    {
+        // opacity: 1;
+
+        pre.KonsoleLine:last-of-type span.KonsoleLineText
+        {
+            animation: KaretBlink 800ms steps(2) infinite;
+        }
+    }
+}
+
 .Konsole
 {
     user-select: none;
+    // opacity: 0.8;
+
+    & *
+    {
+        pointer-events: none !important;
+    }
 
     a
     {
+        pointer-events: all !important;
         color: $black;
         text-decoration: none;
         border-bottom: 2px solid $black;
@@ -34,17 +54,34 @@ $white: rgb(240, 240, 240);
         }
     }
 
-    &:focus
-    // &.active
-    {
+    // &:focus, &:has(#konsoleInput:focus)
+    // // &.active
+    // {
+    //     opacity: 1;
 
-        pre.KonsoleLine:last-of-type span.KonsoleLineText
-        {
-            animation: KaretBlink 800ms steps(2) infinite;
-        }
-
-    }
+    //     pre.KonsoleLine:last-of-type span.KonsoleLineText
+    //     {
+    //         animation: KaretBlink 800ms steps(2) infinite;
+    //     }
+    // }
     
+}
+
+
+#konsoleInput
+{
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+
+    position: absolute;
+    opacity: 0;
+
+    // &:focus
+    // {
+    //     background-color: red;
+    // }
 }
 
 pre.KonsoleLine

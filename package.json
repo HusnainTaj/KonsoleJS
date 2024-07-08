@@ -1,0 +1,32 @@
+{
+  "name": "konsolejs-src",
+  "version": "0.0.4",
+  "author": "Husnain Taj",
+  "description": "A JavaScript Library for creating console UI on the web.",
+  "license": "MIT",
+  "homepage": "https://github.com/HusnainTaj/KonsoleJS#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HusnainTaj/KonsoleJS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HusnainTaj/KonsoleJS/issues"
+  },
+  "keywords": [
+    "console",
+    "javascript",
+    "console",
+    "ui"
+  ],
+  "scripts": {
+    "clean": "rimraf package/dist",
+    "scss": "sass src/main.scss package/dist/index.css",
+    "compile": "tsc && tsc --build tsconfig.es5.json",
+    "build": "npm run clean && npm run scss && npm run compile"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.8",
+    "sass": "^1.77.6",
+    "typescript": "^4.6.3"
+  }
+}

@@ -2,10 +2,9 @@
   "name": "@husnain.taj/konsolejs",
   "version": "0.0.4",
   "description": "A JavaScript Library for creating console UI on the web.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "dist/es5/index.js",
+  "module": "dist/es6/index.js",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HusnainTaj/KonsoleJS.git"

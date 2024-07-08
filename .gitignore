@@ -2,3 +2,4 @@
 .vscode
 test
 node_modules
+package/dist
