@@ -1,3 +1,6 @@
+> [!info]
+> This branch is for the next version of KonsoleJS, I am planning to rewrite the project. Once complete, it will be merged with the main branch. Information below is outdated.
+
 # KonsoleJS
 A Promise based JavaScript Library for creating console UI on the web.
 
