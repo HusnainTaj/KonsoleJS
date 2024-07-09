@@ -30,6 +30,8 @@ export class KonsoleSettings
     animatePrint: boolean = true;
     printLetterInterval: number = 25;
     registerDefaultKommands: boolean = true;
+    caseSensitiveKommands: boolean = true;
+    invalidKommandMessage: string = "invalid command.";
 }
 
 type KommandAction = (arg:any) => Promise<any>;
@@ -51,23 +53,20 @@ export class Kommand
 
 export class Konsole 
 {
-    settings: KonsoleSettings = undefined;
+    settings: KonsoleSettings = new KonsoleSettings();
     elem: HTMLElement|null = undefined;
     inputElem: HTMLInputElement|null = undefined;
     kommands: Kommand[] = [];
 
-    validInput: string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 !@#$%^&*()-_=+~`?.><,|/\\";
-
     constructor(selector: string, settings: KonsoleSettings = new KonsoleSettings()) 
     {
-        this.settings = settings;
-
+        Object.assign(this.settings, settings);
+        
         this.elem = document.querySelector(selector);
 
         if(this.elem == null)
         {
-            console.error(`element`, selector, "wasnt found.");
-            return;
+            throw `element '` + selector + "' wasn't found.";
         }
 
         this.elem.classList.add("Konsole");
@@ -82,19 +81,20 @@ export class Konsole
         }, false);
 
         // Prevent enter key from opening a link after it is focused once by clicking on it
-        // $(this.elem).on('keydown',"a", function(e)
-        // {
-        //     if(e.which === 13) // enter
+        // this.elem.addEventListener('keydown', function(e) {
+        //     if (e.which === 13 && (e.target as HTMLElement).tagName === 'A') 
         //     {
-        //         $(e.currentTarget).blur();
-        //         e.preventDefault(); //prevent the default behavoir
+        //         (e.target as HTMLElement).blur();
+        //         e.preventDefault();
         //     }
         // });
-        this.elem.addEventListener('keydown', function(e) {
-            if (e.which === 13 && (e.target as HTMLElement).tagName === 'A') 
+
+        this.elem.addEventListener('click', (e) => {
+            if ((e.target as HTMLElement).tagName === 'A') 
             {
                 (e.target as HTMLElement).blur();
-                e.preventDefault();
+                this.inputElem.focus();
+                // e.preventDefault();
             }
         });
 
@@ -104,8 +104,43 @@ export class Konsole
         this.inputElem = document.body.querySelector("#konsoleInput");
         this.elem.addEventListener('focus', (e) =>
         {
-            this.inputElem.focus();
+            this.elem.classList.add("focussed");  
+            if(!this.inputElem.disabled) this.inputElem.focus();
         });
+
+        this.inputElem.addEventListener('focus', (e) =>
+        {
+            this.elem.classList.add("focussed");  
+        });
+
+        document.body.addEventListener('focusout', (e) =>
+        {
+            // console.log(e);
+            // relatedTarget is the element that will receive focus next
+            if(this.inputElem.disabled)
+            {
+                if(e.relatedTarget == this.elem) 
+                {
+                    // this.elem.classList.add("focussed");
+                }
+                else if(e.relatedTarget != null)
+                {
+                    this.elem.classList.remove("focussed");
+                }
+            }
+            else
+            {
+                if(e.relatedTarget == this.inputElem) 
+                {
+                    // this.elem.classList.add("focussed");
+                }
+                else
+                {
+                    this.elem.classList.remove("focussed");
+                }
+            }
+        });
+
 
 
         // Automatically Scroll to the bottom when new child is added
@@ -155,7 +190,7 @@ export class Konsole
 
     registerKommand(kommand:Kommand)
     {
-        // TODO: add check for if kommand with same name already exists
+        if(this.kommands.find(k => k.name == kommand.name)) throw `Kommand with name '${kommand.name}' already exists.`;
 
         if(kommand && kommand.name && kommand.description && kommand.action) this.kommands.push(kommand);
     }
@@ -181,8 +216,6 @@ export class Konsole
 
             this.inputElem.addEventListener("input", async (e:InputEvent) => 
             {
-                console.log(e);
-                
                 if (e.inputType === "insertLineBreak") // Enter key
                 {
                     this.inputElem.disabled = true;
@@ -215,13 +248,13 @@ export class Konsole
             command = cl.substr(0,cl.indexOf(" "));
             arg = cl.substr(cl.indexOf(" ")+1);
         }
-        
-        let kommand = this.kommands.find(k => k.name==command);
+
+        let kommand = this.kommands.find(k => this.settings.caseSensitiveKommands ? k.name == command : k.name.toLowerCase() == command.toLowerCase());
 
         if(kommand)
             await kommand.action(arg)
         else
-            await this.print("invalid command.")
+            await this.print(this.settings.invalidKommandMessage);
 
         this.awaitKommand();
     }
@@ -229,9 +262,6 @@ export class Konsole
     print(texts: string|string[])
     {
         if(!Array.isArray(texts)) texts = [texts];
-
-        // Disable user input
-        // document.body.removeEventListener("keydown", BodyKeydownCallback);
 
         return new Promise((resolve, reject)=>{
 
@@ -296,7 +326,7 @@ export class Konsole
         });
     }
 
-    async input(question:string)
+    async input(question:string) :Promise<string>
     {
         await this.print(question + "\n");
 
@@ -322,7 +352,10 @@ export class Konsole
 
             const lastChoices = Array.from(document.querySelectorAll("ul.KonsoleChoice")).pop();
 
-            this.elem.addEventListener("keyup", (e:KeyboardEvent)=>
+            this.inputElem.disabled = false;
+            this.inputElem.value = "";
+
+            this.inputElem.addEventListener("keyup", (e:KeyboardEvent)=>
             {
                 if(e.code === "ArrowDown")
                 {
@@ -354,6 +387,7 @@ export class Konsole
                 }
                 else if (e.code === "Enter")
                 {
+                    this.inputElem.disabled = true;
                     this.controller.abort();
 
                     Array.from(lastChoices.children).forEach((child, index) => {
@@ -366,11 +400,10 @@ export class Konsole
                 }
             }, {signal: this.controller.signal});
 
-            this.elem.focus();
+            this.inputElem.focus();
         });
     }
 
-    
     scrollToBottom()
     {
         this.elem.scrollTop = this.elem.scrollHeight;

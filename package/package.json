@@ -4,6 +4,7 @@
   "description": "A JavaScript Library for creating console UI on the web.",
   "main": "dist/es5/index.js",
   "module": "dist/es6/index.js",
+  "types": "dist/es6/index.d.ts",
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -20,8 +21,5 @@
   "bugs": {
     "url": "https://github.com/HusnainTaj/KonsoleJS/issues"
   },
-  "homepage": "https://github.com/HusnainTaj/KonsoleJS#readme",
-  "dependencies": {
-    "jquery": "^3.7.0"
-  }
+  "homepage": "https://github.com/HusnainTaj/KonsoleJS#readme"
 }

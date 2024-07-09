@@ -22,7 +22,8 @@
     "clean": "rimraf package/dist",
     "scss": "sass src/main.scss package/dist/index.css",
     "compile": "tsc && tsc --build tsconfig.es5.json",
-    "build": "npm run clean && npm run scss && npm run compile"
+    "build": "npm run clean && npm run scss && npm run compile",
+    "docs": "docsify serve docs"
   },
   "devDependencies": {
     "rimraf": "^5.0.8",
