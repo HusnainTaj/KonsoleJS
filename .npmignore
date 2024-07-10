@@ -1,8 +1,8 @@
-.parcel-cache
 .vscode
 docs
 node_modules
 src
 test
 .gitignore
+rollup.config.js
 tsconfig.json

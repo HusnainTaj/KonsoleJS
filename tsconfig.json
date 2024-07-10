@@ -4,13 +4,8 @@
     "target": "ES5",
     "lib": ["ES2020", "DOM"],
     "declaration": true,
-    "outDir": "./package/dist/es6",
+    "declarationDir": "./dist/types",
     "moduleResolution": "node",
-    // parcel
-    "baseUrl": ".",
-    "paths": {
-      "~*": ["./*"]
-    }
   },
   "include": ["src/**/*"]
 }

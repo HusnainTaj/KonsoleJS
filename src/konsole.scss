@@ -12,14 +12,15 @@
 
 .Konsole
 {
+    user-select: none;
+    opacity: var(--konsole-blur-opacity);
+    color: var(--konsole-color);
+
+    
     &.dark
     {
         --konsole-color: var(--konsole-dark-color);
     }
-
-    user-select: none;
-    opacity: var(--konsole-blur-opacity);
-    color: var(--konsole-color);
 
     & *
     {
