@@ -1,123 +1,129 @@
 # KonsoleJS
 A Promise based JavaScript Library for creating console/terminal UI on the web.
 
-## Demo
-Checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
+## Features
+- Print text/HTML
+- Get user input
+- Get user choice
+- Register custom Kommands
+- Case-sensitive Kommands
+- Animated text printing
+- Customizable prefix
 
-## Quick Start for Web
+## Demo
+
+<div id="console" class="dark"></div>
+
+You can also checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
+
+## Installation
+
+### Using NPM
+```bash
+npm i @husnain.taj/konsolejs
+```
+
+### Using CDN
+```html
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/konsolejs/dist/konsole.min.css">
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/@husnain.taj/konsolejs/dist/es6/index.js"></script>
+```
+
+
+## Quick Start
 
 ```html
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Konsole Example</title>
-
-    <link rel="stylesheet" href="konsole.min.css">
 </head>
 <body>
-
     <div id="console"></div>
 
-    <script src="konsole.js"></script>
-    <script>
-        (async ()=>{
-            let konsole = new Konsole("#console");
-
-            await konsole.print("Hello Konsole!");
-
-            konsole.awaitKommand();
-        })();
-    </script>
+    <script src="index.js" type="module"></script>
 </body>
 </html>
 ```
 
-# API Reference
-## KonsoleSettings
+```js
+// index.js
+import { Konsole } from "@husnain.taj/konsolejs";
 
-| Name | Default | Type | Description |
-| ------ | ------ | ------ | ------ |
-| prefix | "$" | string | The string shown at the very beginning of a line. |
-| animatePrint | true | bool | Whether to print text letter by letter or all at once. |
-| printLetterInterval | 25 | int | The time in ms between each letter when printing. |
-| registerDefaultKommands | true | bool | Whether to [Register Default Kommands](#registerdefaultkommands) or not. |
-| caseSensitiveKommands | true | bool | Weather kommands should be case-sensitive. |
-| invalidKommandMessage | "invalid command." | string | Text to print when no kommand matches the input.
-
-### Example
-
-```ts
-
-    let konsole = new Konsole("#console", {prefix:"C:\>"});
+(async ()=>{
+    let konsole = new Konsole("#console");
 
     await konsole.print("Hello Konsole!");
 
     konsole.awaitKommand();
-
+})();
 ```
 
-## Kommand
-
-| Name | Type | Description |
-| ------ | ------ | ------ |
-| name | string | The name of the kommand that is used in konsole to execute it. |
-| description | string | Short description of what the kommand does. |
-| details | string | Detailed information about usage/syntax of a kommand. It is shown when using *help kommandName*. |
-| func | string | A function that is executed when user enters the kommand in konsole. |
-
-> Note: All the properties are required except `details` to [Register a Kommand](#registerkommand).
+# API Reference
 
 ## Konsole
-The Konsole Class takes 2 arguments.
-1. Query Selector string for the target konsole element
-2. [Konsole Settings](#konsolesettings) object (Optional)
+The central class of the library — it is used to initialize the Konsole Object and Html container and interact with it.
 
+#### Example
 ```js
-    let konsole = new Konsole("#my-konsole-element", {prefix:"C:\>"});
+let konsole = new Konsole("#my-konsole-element", { prefix:"C:\>" });
 
-    await konsole.print("Hello Konsole!");
+await konsole.print("Hello Konsole!");
 
-    konsole.awaitKommand();
+konsole.awaitKommand();
 ```
 
+### Constructor
 
-#### RegisterDefaultKommands
-It will add following 2 Kommands to the Konsole.
-- clear - Empties the Konsole element's html.
-- help - Shows all registered Kommands
-```js
-    konsole.RegisterDefaultKommands();
-```
-You can call this function manually or automatically by setting registerDefaultKommands = true in [Konsole Settings](#konsolesettings).
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| selector | string | query selector string for the konsole's container element. |
+| settings | [Konsole Settings](#konsolesettings)? | settings object (optional) |
 
-#### RegisterKommand
+### Properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| elem | HTMLElement | The container of the Konsole. |
+| settings | [KonsoleSettings](#konsolesettings) | The settings object passed to the constructor. |
+| kommands | [Kommand](#Kommand)[] | List of all registered Kommands. |
+
+
+### Methods
+#### registerKommand
 Adds a new [Kommand](#kommand) to valid Kommands List in the Konsole.
 ```js
-    let myKommand = new Kommand("clear", "clears the console.", null, () =>
-        new Promise((resolve, reject)=>
-        {
-            $("#console").html("");
-            resolve();
-        })
-    );
+let myKommand = new Kommand("clear", "clears the console.", null, (arg, konsole) =>
+    new Promise((resolve, reject)=>
+    {
+        konsole.elem.innerHtml = "";
+        resolve(true);
+    })
+);
 
-    konsole.RegisterKommand(myKommand);
+konsole.RegisterKommand(myKommand);
 ```
 
 #### awaitKommand
-This method lets the user to enter a Kommand and then executes it when enter key is pressed.
+This method waits for the user to enter a Kommand and then executes it.
+
 ```js
-    konsole.awaitKommand();
+konsole.awaitKommand();
 ```
 
 #### print
-As the name suggests this will output the text/html in the console.
-```js
-    // printing a single line
-    await konsole.print("Hello Konsole!");
+outputs the given text/html in the console.
 
-    // printing multiple lines 
-    await konsole.print("Hello", "Konsole!");
+```js
+// printing a single line
+await konsole.print("Hello Konsole!");
+
+// printing multiple lines 
+await konsole.print("Hello", "Konsole!");
 ```
 If you have set `animatePrint` to `true` in [Konsole Settings](#konsolesettings), and try to print HTML, The Konsole will first *animately* print the html as text and then replace the text with actual html.
 
@@ -126,23 +132,95 @@ So basically, if you do `konsole.print("<a href='hello'>Konsole</a>");`, you wil
 #### input
 This method will get a string value from user.
 
-```js
-    let age = await konsole.input("How old are you?");
+**Parameters:**
+- `question: string` - The question to ask the user.
 
-    await konsole.print(`You said: ${age}`);
+**Returns:** User's response as a `string`.
+
+```js
+let age = await konsole.input("How old are you?");
+
+await konsole.print(`You said: ${age}`);
 ```
 #### choice
 This method will show the list of options with the question to the user. The user can select one of the options using arrow keys and press enter to submit.
-```js
-    let selectedOption = await konsole.choice("Which language is the best?", ["C#", "C Sharp", "C++++", "Microsoft Java"]);
 
-    await konsole.print(`You chose: ${selectedOption}`);
+**Parameters:**
+- `question: string` - The question to ask the user.
+- `options: string[]` - An array of strings representing the options.
+
+**Returns:** The selected option.
+
+```js
+let selectedOption = await konsole.choice("Which one the best programming language?", ["C#", "C Sharp", "C++++", "Microsoft Java"]);
+
+await konsole.print(`You chose: ${selectedOption}`);
 ```
 
-## Known Bugs
-- too many to list rn, ill update this later when the project is stable.
+<hr>
 
-## Todo
-- Complete [Quick Start](#quick-start)
-- Complete [Docs](#documentation)
-- Complete this Readme
+## Kommand
+
+A `Kommand` is a command that can be executed in Konsole. It has the following properties:
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| name | string | The name of the kommand that is used in konsole to execute it. |
+| description | string | Short description of what the kommand does. |
+| details | string? | Detailed information about usage/syntax of a kommand. It is shown when `help kommandName` is entered. |
+| action | [KommandAction](#KommandAction) | A function that is executed when user enters the kommand in konsole. |
+
+> Note: All the properties are required except `details` to [Register a Kommand](#registerkommand).
+
+### KommandAction
+A function that takes `arg: string` and `konsole: Konsole` as parameters and returns a Promise that resolves after the action is completed. It is executed when the user enters the kommand's name in Konsole.
+
+```js
+let myKommand = new Kommand("clear", "clears the console.", null, (arg:string, konsole:Konsole) =>
+    new Promise((resolve, reject)=>
+    {
+        $("#console").html("");
+        resolve();
+    })
+);
+```
+
+<hr>
+
+## KonsoleSettings
+
+Configuration object that can be passed to `Konsole`'s constructor.
+
+| Property | Type | Default | Description |
+| ------ | ------ | ------ | ------ |
+| prefix | string | "$" | The string shown at the very beginning of a line. |
+| animatePrint | bool | true | Whether to print text letter by letter or all at once. |
+| printLetterInterval | int | 25 | The time in ms between each letter when printing. |
+| registerDefaultKommands | bool | true | Whether to register [Default Kommands](#Default-Kommands) or not. |
+| caseSensitiveKommands | bool | true | Weather kommands should be case-sensitive. |
+| invalidKommandMessage | string | "invalid command." | Text to print when no kommand matches the input.
+
+### Default Kommands
+
+| Name | Description |
+| ------ | ------ |
+| clear | Empties the Konsole element's html. |
+| help | Shows all registered Kommands. |
+
+### Example
+```js
+
+let konsole = new Konsole("#console", 
+    { 
+        prefix: "C:\>",
+        animatePrint: false,
+        registerDefaultKommands: false,
+    }
+);
+
+await konsole.print("Hello Konsole!");
+
+konsole.awaitKommand();
+
+```
+

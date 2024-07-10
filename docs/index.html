@@ -7,14 +7,70 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="./temp/index.css">
+  <style>
+      #console-cont
+      {
+        width: 100%;
+        background-color: #1d1d1d;
+        height: 100vh;
+      }
+
+      #console
+      {
+        --konsole-blur-opacity: 1;
+
+        border-radius: 10px;
+        background-color: #0d0d0d;
+        padding: 30px;
+        min-height: 400px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      /* docsify override */
+      #console pre
+      {
+        background-color: transparent;
+      }
+  </style>
+
 </head>
 <body>
-  <h1>yea</h1>
+ 
   <div id="app"></div>
+
+  <script src="./temp/main.js" type="module"></script>
+
   <script>
     window.$docsify = {
-      name: '',
-      repo: ''
+      name: 'KonsoleJS',
+      repo: 'https://github.com/HusnainTaj/KonsoleJS',
+      // themeColor: '#3F51B5',
+      coverpage: true,
+      plugins:[
+        function onReady(hook, vm)
+        {
+          hook.ready(async function () {
+
+            let konsole = new Konsole("#console");
+
+            await konsole.print("Welcome to the Konsole!");
+            await konsole.print("sadf as <a href='https://exmaple.com' target='_blank'>exmaple</a> asdasd");
+
+            let r = await konsole.input("What is your name?");
+
+            await konsole.print("Hello " + r + "! How are you?");
+
+            let r2 = await konsole.choice("Use Arrow keys to select and Enter to submit", [":)", ":|", ":("]);
+
+            await konsole.print("Intersting... Try out some other commands!");
+
+            await konsole.awaitKommand();
+
+          });
+        }
+      ]
     }
   </script>
   <!-- Docsify v4 -->

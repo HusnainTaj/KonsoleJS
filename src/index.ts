@@ -1,24 +1,22 @@
 // TODO:
 // + Events: onPrint, onWrongKommand etc
-// + case insensitive commands option
-// + better konsoleSettings implementation
-// Done
-// + refactor lambda functions in event listeners so only our listener is removed when using $0.off("keydown")
-// + use input element for input instead of div
 
-class Helpers
+import { Kommand, DefaultKommands } from "./kommand";
+export { Kommand } from "./kommand";
+
+class MarkupHelpers
 {
-    static konsoleLineMarkup(prefix:string) :string
+    static line(prefix: string): string
     {
         return `<pre class="KonsoleLine"><span class="KonsolePrefix">${prefix} </span><span class="KonsoleLineText"></span></pre>`;
     }
 
-    static konsoleParaMarkup() :string
+    static para(): string
     { 
         return `<pre class="KonsolePara"><span class="KonsoleParaText"></span></pre>`;
     }
 
-    static konsoleChoiceMarkup(lis:any) :string
+    static choice(lis: any): string
     {
         return `<pre><ul class="KonsoleChoice">${lis}</ul></pre>`;
     }
@@ -34,27 +32,10 @@ export class KonsoleSettings
     invalidKommandMessage: string = "invalid command.";
 }
 
-type KommandAction = (arg:any) => Promise<any>;
-export class Kommand
-{
-    name: string;
-    description: string;
-    details: string;
-    action: KommandAction;
-
-    constructor(_name:string, _description:string, _details:string, _action: KommandAction)
-    {
-        this.name = _name;
-        this.description = _description;
-        this.details = _details;
-        this.action = _action;
-    }
-}
-
 export class Konsole 
 {
     settings: KonsoleSettings = new KonsoleSettings();
-    elem: HTMLElement|null = undefined;
+    elem: HTMLElement = undefined;
     inputElem: HTMLInputElement|null = undefined;
     kommands: Kommand[] = [];
 
@@ -62,12 +43,12 @@ export class Konsole
     {
         Object.assign(this.settings, settings);
         
-        this.elem = document.querySelector(selector);
-
-        if(this.elem == null)
+        if(document.querySelector(selector) == null)
         {
             throw `element '` + selector + "' wasn't found.";
         }
+
+        this.elem = document.querySelector(selector);
 
         this.elem.classList.add("Konsole");
         this.elem.setAttribute("tabindex", "0");
@@ -93,21 +74,23 @@ export class Konsole
             if ((e.target as HTMLElement).tagName === 'A') 
             {
                 (e.target as HTMLElement).blur();
-                this.inputElem.focus();
+                this.elem.focus();
                 // e.preventDefault();
             }
         });
 
         // Add input element
-        // this.elem.insertAdjacentHTML("beforeend", `<input type="text" id="konsoleInput" disabled>`);
         this.elem.insertAdjacentHTML("afterend", `<textarea id="konsoleInput" disabled></textarea>`);
         this.inputElem = document.body.querySelector("#konsoleInput");
+        
+        // Handle Konsole Focus
         this.elem.addEventListener('focus', (e) =>
         {
             this.elem.classList.add("focussed");  
             if(!this.inputElem.disabled) this.inputElem.focus();
         });
 
+        // input can also be focused directly using code
         this.inputElem.addEventListener('focus', (e) =>
         {
             this.elem.classList.add("focussed");  
@@ -115,7 +98,6 @@ export class Konsole
 
         document.body.addEventListener('focusout', (e) =>
         {
-            // console.log(e);
             // relatedTarget is the element that will receive focus next
             if(this.inputElem.disabled)
             {
@@ -130,62 +112,36 @@ export class Konsole
             }
             else
             {
-                if(e.relatedTarget == this.inputElem) 
-                {
-                    // this.elem.classList.add("focussed");
-                }
-                else
+                if (e.relatedTarget !== this.inputElem) 
                 {
                     this.elem.classList.remove("focussed");
                 }
             }
         });
 
-
-
         // Automatically Scroll to the bottom when new child is added
-        const observer = new MutationObserver((mutationsList, observer) => {
-            for(const mutation of mutationsList) {
-                if (mutation.type === 'childList') {
+        const observer = new MutationObserver((mutationsList, observer) => 
+        {
+            for(const mutation of mutationsList) 
+            {
+                if (mutation.type === 'childList') 
+                {
                     // console.log('A child node has been added or removed.', mutation.addedNodes.);
-                    this.scrollToBottom();
+                    this.elem.scrollTop = this.elem.scrollHeight;
                 }
             }
         });
 
         observer.observe(this.elem, { attributes: false, childList: true, subtree: false });
 
-        if(this.settings.registerDefaultKommands) this.registerDefaultKommands();
-    }
-
-    registerDefaultKommands()
-    {
-        this.kommands.push(new Kommand("clear", "clears the console.", null, (arg) => new Promise(async (resolve, reject)=>{
-            this.elem.innerHTML = "";
-            resolve(true);
-        })));
-
-        this.kommands.push(new Kommand("help", "display all valid commands.", null, async (arg)=>{
-
-            if(arg)
+        // Register Default Kommands
+        if(this.settings.registerDefaultKommands)
+        {
+            for (const kommand of DefaultKommands) 
             {
-                let kommand = this.kommands.find(k => k.name==arg);
-                if(kommand)
-                {
-                    return this.print(kommand.details || kommand.description);
-                }
-                else
-                {
-                    return this.print(`'${arg}' is not a valid command.`);
-                }
+                this.registerKommand(kommand);
             }
-
-            if(this.settings.animatePrint) await this.print("tip: you can skip text animation by pressing space.")
-
-            let lengthOfLargestKommandName = Math.max(...this.kommands.map(k=>k.name.length));
-
-            return this.print(this.kommands.map(k=>k.name + " ".repeat(lengthOfLargestKommandName - k.name.length) + " - " + k.description));
-        }));
+        }
     }
 
     registerKommand(kommand:Kommand)
@@ -205,7 +161,7 @@ export class Konsole
     {
         return new Promise((resolve, reject)=>{
 
-            this.elem.insertAdjacentHTML("beforeend", Helpers.konsoleLineMarkup(this.settings.prefix));
+            this.elem.insertAdjacentHTML("beforeend", MarkupHelpers.line(this.settings.prefix));
             let lastLine = Array.from(document.querySelectorAll(".KonsoleLine")).pop().querySelector("span.KonsoleLineText");
             
             this.initController();
@@ -252,32 +208,30 @@ export class Konsole
         let kommand = this.kommands.find(k => this.settings.caseSensitiveKommands ? k.name == command : k.name.toLowerCase() == command.toLowerCase());
 
         if(kommand)
-            await kommand.action(arg)
+            await kommand.action(arg, this)
         else
             await this.print(this.settings.invalidKommandMessage);
 
         this.awaitKommand();
     }
 
-    print(texts: string|string[])
+    print(...texts: string[])
     {
-        if(!Array.isArray(texts)) texts = [texts];
-
         return new Promise((resolve, reject)=>{
 
-            if(!(texts as string[]).join("\n").trim())
+            if(!texts.join("").trim())
             {
                 reject("Empty Text.");
                 return;
             }
 
             // Append new Konsole Para Markup
-            this.elem.insertAdjacentHTML("beforeend", Helpers.konsoleParaMarkup());
+            this.elem.insertAdjacentHTML("beforeend", MarkupHelpers.para());
 
             const LastKonsolePara = Array.from(document.querySelectorAll(".KonsolePara")).pop().querySelector(".KonsoleParaText");
 
             // input in HTML
-            const htmlToPrint = (texts as string[]).join("\n");
+            const htmlToPrint = texts.join("\n");
 
             // Temporary elem to convert HTML to simple Text
             const tempHtmlElem = document.createElement("div");
@@ -346,7 +300,7 @@ export class Konsole
             lis += `<li ${ i == 0 ? "class='active'" : ""}>${choice}</li>`;
         }
 
-        this.elem.insertAdjacentHTML("beforeend", Helpers.konsoleChoiceMarkup(lis));
+        this.elem.insertAdjacentHTML("beforeend", MarkupHelpers.choice(lis));
        
         return new Promise((resolve, reject)=>{
 
@@ -402,11 +356,6 @@ export class Konsole
 
             this.inputElem.focus();
         });
-    }
-
-    scrollToBottom()
-    {
-        this.elem.scrollTop = this.elem.scrollHeight;
     }
 
     initController()
