@@ -1,5 +1,5 @@
 {
-  "name": "konsolejs-src",
+  "name": "@husnain.taj/konsolejs",
   "version": "0.0.4",
   "author": "Husnain Taj",
   "description": "A JavaScript Library for creating console UI on the web.",
@@ -12,22 +12,30 @@
   "bugs": {
     "url": "https://github.com/HusnainTaj/KonsoleJS/issues"
   },
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "browser": "dist/browser.js",
+  "types": "dist/types.d.ts",
+  "sideEffects": false,
   "keywords": [
     "console",
     "javascript",
-    "console",
     "ui"
   ],
   "scripts": {
-    "clean": "rimraf package/dist",
     "scss": "sass src/main.scss package/dist/index.css",
-    "compile": "tsc && tsc --build tsconfig.es5.json",
-    "build": "npm run clean && npm run scss && npm run compile",
-    "docs": "docsify serve docs"
+
+    "clean": "rimraf dist",
+    "docs": "docsify serve docs",
+    "build": "npm run clean && parcel build",
+    "watch": "parcel watch"
   },
   "devDependencies": {
-    "rimraf": "^5.0.8",
-    "sass": "^1.77.6",
-    "typescript": "^4.6.3"
+    "@parcel/packager-ts": "^2.12.0",
+    "@parcel/transformer-inline-string": "^2.12.0",
+    "@parcel/transformer-typescript-types": "^2.12.0",
+    "parcel": "^2.12.0",
+    "rimraf": "^5.0.8"
   }
 }
