@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>KonsoleJS NPM (no bundler) Example</title>
+    <!-- KonsoleJS CSS -->
+    <link rel="stylesheet" href="./node_modules/@husnain.taj/konsolejs/dist/konsole.min.css">
+    <style>
+        /* Your Custom Styles */
+        body
+        {
+            color:white;
+            background-color: #1d1d1d;
+            font-family: monospace;
+            padding: 20px;
+            font-size: 30px;
+        }
+
+        #console
+        {
+            background-color: #0d0d0d;
+            padding: 40px;
+            border-radius: 6px;
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>KonsoleJS</h1>
+    <h3>NPM (no bundler) Example</h3>
+
+    <div id="console" class="dark"></div>
+
+    <!-- KonsoleJS JS -->
+    <script type="module">
+        import {Konsole} from "./node_modules/@husnain.taj/konsolejs/dist/konsole.mjs";
+        (async ()=>
+        {
+            let konsole = new Konsole("#console");
+
+            await konsole.print("Welcome to the Konsole!");
+            await konsole.print("Check the complete docs <a href='https://github.com/HusnainTaj/KonsoleJS' target='_blank'>here</a>.");
+            if(konsole.settings.animatePrint) await konsole.print("tip: you can skip text animation by pressing space.")
+            
+            let r = await konsole.prompt("What is your name?");
+
+            await konsole.print("Hello " + r + "! How are you?");
+
+            let r2 = await konsole.choice("Use Arrow keys to select and Enter to submit", [":)", ":|", ":("]);
+
+            await konsole.print("Intersting... Try out some other commands!");
+
+            await konsole.awaitKommand();
+        })();
+    </script>
+</body>
+</html>

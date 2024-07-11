@@ -1,4 +1,4 @@
-#[Dd]ist/
+[Dd]ist/
 .vscode
-test
+.parcel-cache
 node_modules
