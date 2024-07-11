@@ -1,10 +1,10 @@
 {
   "name": "@husnain.taj/konsolejs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Husnain Taj",
   "description": "A JavaScript Library for creating console UI on the web.",
   "license": "MIT",
-  "homepage": "https://github.com/HusnainTaj/KonsoleJS#readme",
+  "homepage": "https://husnaintaj.github.io/KonsoleJS",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HusnainTaj/KonsoleJS.git"
@@ -19,7 +19,9 @@
   "sideEffects": false,
   "keywords": [
     "console",
+    "terminal",
     "javascript",
+    "pormise",
     "ui"
   ],
   "scripts": {
