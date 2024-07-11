@@ -60,7 +60,7 @@ npm i @husnain.taj/konsolejs
 </html>
 ```
 
-?> You can find this quickstart sample [here](https://github.com/HusnainTaj/KonsoleJS/tree/main/samples/cdn).
+?> You can find this quickstart sample [here](https://github.com/HusnainTaj/KonsoleJS/tree/main/samples/quickstart/cdn).
 
 ### Using NPM
 ```bash
