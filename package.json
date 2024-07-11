@@ -1,6 +1,6 @@
 {
   "name": "@husnain.taj/konsolejs",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "author": "Husnain Taj",
   "description": "A JavaScript Library for creating console UI on the web.",
   "license": "MIT",
@@ -12,8 +12,9 @@
   "bugs": {
     "url": "https://github.com/HusnainTaj/KonsoleJS/issues"
   },
-  "main": "dist/konsole.common.js",
-  "module": "dist/konsole.esm.js",
+  "main": "dist/konsole.cjs",
+  "browser": "dist/konsole.cjs",
+  "module": "dist/konsole.mjs",
   "types": "dist/types/index.d.ts",
   "sideEffects": false,
   "keywords": [
@@ -25,6 +26,8 @@
     "clean": "rimraf dist",
     "scss": "sass src/konsole.scss dist/konsole.css && sass src/konsole.scss dist/konsole.min.css --style=compressed",
     "build": "npm run clean && npm run scss && rollup --config --bundleConfigAsCjs",
+    
+    "cp-dist-to-docs":"rimraf ./docs/dist && @powershell Copy-Item -Force -Recurse './dist' './docs'",
     "docs": "docsify serve docs"
   },
   "devDependencies": {

@@ -18,11 +18,12 @@ class MarkupHelpers
         return `<pre><ul class="KonsoleChoice">${lis}</ul></pre>`;
     }
 }
+
 export class Konsole 
 {
     settings: KonsoleSettings = new KonsoleSettings();
     elem: HTMLElement = undefined;
-    inputElem: HTMLInputElement|null = undefined;
+    inputElem: HTMLInputElement = undefined; // For internal use
     kommands: Kommand[] = [];
 
     constructor(selector: string, settings: KonsoleSettings = new KonsoleSettings()) 
@@ -47,21 +48,12 @@ export class Konsole
             }
         }, false);
 
-        // Prevent enter key from opening a link after it is focused once by clicking on it
-        // this.elem.addEventListener('keydown', function(e) {
-        //     if (e.which === 13 && (e.target as HTMLElement).tagName === 'A') 
-        //     {
-        //         (e.target as HTMLElement).blur();
-        //         e.preventDefault();
-        //     }
-        // });
-
+        // Refocus on Konsole when user clicks on a link
         this.elem.addEventListener('click', (e) => {
             if ((e.target as HTMLElement).tagName === 'A') 
             {
                 (e.target as HTMLElement).blur();
                 this.elem.focus();
-                // e.preventDefault();
             }
         });
 
@@ -125,24 +117,34 @@ export class Konsole
         {
             for (const kommand of DefaultKommands) 
             {
-                this.registerKommand(kommand);
+                this.addKommand(kommand);
             }
         }
     }
 
-    registerKommand(kommand:Kommand)
+    /**
+     * Adds a new Kommand to valid kommands list.
+     */
+    addKommand(kommand:Kommand)
     {
         if(this.kommands.find(k => k.name == kommand.name)) throw `Kommand with name '${kommand.name}' already exists.`;
 
         if(kommand && kommand.name && kommand.description && kommand.action) this.kommands.push(kommand);
     }
 
+    
+    /**
+     * Removes the Kommand with the given name from kommands list.
+     */
     removeKommand(name:string)
     {
         this.kommands = this.kommands.filter(k => k.name !== name);
     }
 
-    private controller = new AbortController;
+    private inputController = new AbortController;
+    /**
+     * Let's user input anything and returns a promise that resolves to the user's input.
+     */
     getInput():Promise<string>
     {
         return new Promise((resolve, reject)=>{
@@ -150,18 +152,18 @@ export class Konsole
             this.elem.insertAdjacentHTML("beforeend", MarkupHelpers.line(this.settings.prefix));
             let lastLine = Array.from(document.querySelectorAll(".KonsoleLine")).pop().querySelector("span.KonsoleLineText");
             
-            this.initController();
+            this.resetController();
 
             this.inputElem.disabled = false;
             this.inputElem.value = "";
-            this.inputElem.focus();
+            if(this.elem.classList.contains("focussed")) this.inputElem.focus();
 
             this.inputElem.addEventListener("input", async (e:InputEvent) => 
             {
                 if (e.inputType === "insertLineBreak") // Enter key
                 {
                     this.inputElem.disabled = true;
-                    this.controller.abort();
+                    this.inputController.abort();
 
                     // trim and replace multiple spaces with only a single one
                     let cl = this.inputElem.value.trim().replace( /  +/g, "");
@@ -172,11 +174,14 @@ export class Konsole
                 {
                     lastLine.textContent = this.inputElem.value;
                 }
-            }, {signal: this.controller.signal});
+            }, {signal: this.inputController.signal});
         });
     }
 
-    async awaitKommand()
+    /**
+     * Prompts the user to enter a Kommand and executes the action associated with it if it is registered.
+     */
+    async awaitKommand(awaitNext:boolean = true)
     {
         let cl = await this.getInput();
 
@@ -198,10 +203,14 @@ export class Konsole
         else
             await this.print(this.settings.invalidKommandMessage);
 
-        this.awaitKommand();
+        if(awaitNext) await this.awaitKommand();
     }
 
-    print(...texts: string[])
+    /**
+     * Prints the given text/html in the console.
+     * 
+     */
+    print(...texts: string[]): Promise<void>
     {
         return new Promise((resolve, reject)=>{
 
@@ -238,46 +247,53 @@ export class Konsole
                     {
                         LastKonsolePara.innerHTML = htmlToPrint;
                         clearInterval(lineInter);
-                        this.controller.abort();
-                        resolve("Printed animately");
+                        this.inputController.abort();
+                        resolve(); // "Printed animately"
                     }
 
                 }, this.settings.printLetterInterval);
 
                 // Skip the animation if user presses space
-                this.initController();
+                this.resetController();
 
                 document.body.addEventListener("keydown", (e)=>{
                     if (e.code === "Space")
                     {
                         LastKonsolePara.innerHTML = htmlToPrint;
                         clearInterval(lineInter);
-                        this.controller.abort();
-                        resolve("Printed animately (interrupted)");
+                        this.inputController.abort();
+                        resolve(); // "Printed animately (interrupted)"
                     }
-                }, {signal: this.controller.signal});
+                }, {signal: this.inputController.signal});
             }
             else
             {
                 LastKonsolePara.innerHTML = htmlToPrint;
 
-                resolve("Printed non-animately");
+                resolve(); // "Printed non-animately"
             }
         });
     }
 
-    async input(question:string) :Promise<string>
+    /**
+     * Prints the question and prompts the user for input and returns a promise that resolves to the user's answer.
+     */
+    async prompt(question:string) :Promise<string>
     {
         await this.print(question + "\n");
 
         return await this.getInput();
     }
 
+    /**
+     * This method will show the list of options with the question to the user.
+     * The user can select one of the options by using arrow keys to select and pressing enter to submit.
+     */
     async choice(question:string, choices:string[]): Promise<string>
     {
         await this.print(question);
 
-        this.initController();
+        this.resetController();
 
         let lis = "";
         for (let i = 0; i < choices.length; i++) {
@@ -328,7 +344,7 @@ export class Konsole
                 else if (e.code === "Enter")
                 {
                     this.inputElem.disabled = true;
-                    this.controller.abort();
+                    this.inputController.abort();
 
                     Array.from(lastChoices.children).forEach((child, index) => {
                         if (child.classList.contains("active"))
@@ -338,15 +354,16 @@ export class Konsole
                     });
 
                 }
-            }, {signal: this.controller.signal});
+            }, {signal: this.inputController.signal});
 
             this.inputElem.focus();
         });
     }
 
-    initController()
+    // For internal use
+    resetController()
     {
-        this.controller.abort();
-        this.controller = new AbortController;
+        this.inputController.abort();
+        this.inputController = new AbortController;
     }
 };

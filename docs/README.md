@@ -1,81 +1,96 @@
 # KonsoleJS
 A Promise based JavaScript Library for creating console/terminal UI on the web.
 
-## Features
-- Print text/HTML
-- Get user input
-- Get user choice
-- Register custom Kommands
-- Case-sensitive Kommands
-- Animated text printing
-- Customizable prefix
-
 ## Demo
 
 <div id="console" class="dark"></div>
 
-You can also checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
+!> You can also checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
 
 ## Installation
+
+### Using CDN
+```html
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@husnain.taj/konsolejs/dist/konsole.min.css">
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/@husnain.taj/konsolejs/dist/konsole.js"></script>
+<script>
+    // The library classes are available in the global scope as follows:
+    // Konsole.Konsole
+    // Konsole.KonsoleSettings
+    // Konsole.Kommand
+</script>
+```
 
 ### Using NPM
 ```bash
 npm i @husnain.taj/konsolejs
 ```
 
-### Using CDN
-```html
-<!-- CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/konsolejs/dist/konsole.min.css">
-
-<!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/@husnain.taj/konsolejs/dist/es6/index.js"></script>
-```
-
-
 ## Quick Start
 
+### Using CDN
+
 ```html
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Konsole Example</title>
+    <!-- KonsoleJS CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/konsolejs/dist/konsole.min.css">
 </head>
 <body>
     <div id="console"></div>
 
-    <script src="index.js" type="module"></script>
+    <!-- KonsoleJS javascript -->
+    <script src="https://cdn.jsdelivr.net/npm/@husnain.taj/konsolejs/dist/konsole.js"></script>
+    <script>
+        (async ()=>
+        {
+            let konsole = new Konsole.Konsole("#console");
+
+            await konsole.print("Hello Konsole!");
+
+            await konsole.awaitKommand();
+        })();
+    </script>
 </body>
 </html>
 ```
 
-```js
-// index.js
-import { Konsole } from "@husnain.taj/konsolejs";
+?> You can find this quickstart sample [here](https://github.com/HusnainTaj/KonsoleJS/tree/main/samples/cdn).
 
-(async ()=>{
-    let konsole = new Konsole("#console");
+### Using NPM
+```bash
+npm i @husnain.taj/konsolejs
+```
+
+```js
+import { Konsole } from "@husnain.taj/konsolejs"; // KonsoleJS javascript
+import "@husnain.taj/konsolejs/dist/konsole.min.css"; // KonsoleJS CSS
+
+(async ()=>
+{
+    let konsole = new.Konsole("#console");
 
     await konsole.print("Hello Konsole!");
 
-    konsole.awaitKommand();
+    await konsole.awaitKommand();
 })();
 ```
+
+!> Depending on the choice of the bundler, you may need to configure it to bundle the CSS file as well.
+
+?> You can use webpack or any other bundler to bundle the code. Check out this [example](https://github.com/HusnainTaj/KonsoleJS/tree/main/samples/quickstart/parcel) to see how to setup KonsoleJS with [Parcel bundler](https://parceljs.org/).
+
+?> You can also see this [example](https://github.com/HusnainTaj/KonsoleJS/tree/main/samples/quickstart/npm) to see how to setup KonsoleJS with only npm without using any bundler. (CDN prefered over this method)
 
 # API Reference
 
 ## Konsole
 The central class of the library — it is used to initialize the Konsole Object and Html container and interact with it.
-
-#### Example
-```js
-let konsole = new Konsole("#my-konsole-element", { prefix:"C:\>" });
-
-await konsole.print("Hello Konsole!");
-
-konsole.awaitKommand();
-```
 
 ### Constructor
 
@@ -83,6 +98,15 @@ konsole.awaitKommand();
 | ------ | ------ | ------ |
 | selector | string | query selector string for the konsole's container element. |
 | settings | [Konsole Settings](#konsolesettings)? | settings object (optional) |
+
+#### Example
+```js
+let konsole = new Konsole("#my-konsole-element", { prefix:"C:\>" });
+
+await konsole.print("Hello Konsole!");
+
+await konsole.awaitKommand();
+```
 
 ### Properties
 
@@ -94,8 +118,17 @@ konsole.awaitKommand();
 
 
 ### Methods
-#### registerKommand
+#### addKommand
 Adds a new [Kommand](#kommand) to valid Kommands List in the Konsole.
+
+See the [Kommand](#kommand) section for details on how to create a Kommand.
+
+
+**Parameters:**
+- `kommand: Kommand` - The Kommand to add.
+
+**Returns:** `void`
+
 ```js
 let myKommand = new Kommand("clear", "clears the console.", null, (arg, konsole) =>
     new Promise((resolve, reject)=>
@@ -105,18 +138,46 @@ let myKommand = new Kommand("clear", "clears the console.", null, (arg, konsole)
     })
 );
 
-konsole.RegisterKommand(myKommand);
+konsole.addKommand(myKommand);
+```
+
+#### removeKommand
+Removes the Kommand with the given name from kommands list.
+
+**Parameters:**
+- `name: string` - name of the Kommand to remove.
+
+**Returns:** `void`
+
+```js
+konsole.removeKommand("clear");
 ```
 
 #### awaitKommand
-This method waits for the user to enter a Kommand and then executes it.
+This prompts the user to enter a Kommand and executes the action associated with it if it is registered.
+
+**Parameters:**
+- `awaitNext: boolean` - Whether to wait for the next Kommand after the current one is executed. Defaults to `true`.
+
+**Returns:** `Promise<void>`
 
 ```js
-konsole.awaitKommand();
+await konsole.awaitKommand();
 ```
 
+**Kommand Format:** `name arg` - The name of the Kommand followed by any arguments.
+
+Everything after the first space is considered as an argument and is passed as the first argument to the Kommand's action.
+
+Check out the [Kommand](#kommand) section for details.
+
 #### print
-outputs the given text/html in the console.
+Prints the given text/html in the console. Passing multiple strings will print them on separate lines.
+
+**Parameters:**
+- `text: ...string[]` - text(s) to print.
+
+**Returns:** `Promise<void>` - a promise that resolves once the text is printed.
 
 ```js
 // printing a single line
@@ -129,27 +190,38 @@ If you have set `animatePrint` to `true` in [Konsole Settings](#konsolesettings)
 
 So basically, if you do `konsole.print("<a href='hello'>Konsole</a>");`, you will not be able to click the link while Konsole is printing.
 
-#### input
-This method will get a string value from user.
+#### getInput
+Let's user input anything and returns a promise that resolves to the user's input.
 
-**Parameters:**
-- `question: string` - The question to ask the user.
-
-**Returns:** User's response as a `string`.
+**Returns:** `Promise<string>` - the user's input.
 
 ```js
-let age = await konsole.input("How old are you?");
+let r = await konsole.getInput();
+
+await konsole.print(`You entered: ${r}`);
+```
+
+#### prompt
+Prints the question and prompts the user for input and returns a promise that resolves to the user's answer.
+
+**Parameters:**
+- `question: string` - text to show to the user as a prompt.
+
+**Returns:** `Promise<string>` - the user's input.
+
+```js
+let age = await konsole.prompt("How old are you?");
 
 await konsole.print(`You said: ${age}`);
 ```
 #### choice
-This method will show the list of options with the question to the user. The user can select one of the options using arrow keys and press enter to submit.
+This method will show the list of options with the question to the user. The user can select one of the options by using arrow keys to select and pressing enter to submit.
 
 **Parameters:**
 - `question: string` - The question to ask the user.
 - `options: string[]` - An array of strings representing the options.
 
-**Returns:** The selected option.
+**Returns:** `Promise<string>` - The selected option.
 
 ```js
 let selectedOption = await konsole.choice("Which one the best programming language?", ["C#", "C Sharp", "C++++", "Microsoft Java"]);
@@ -160,7 +232,6 @@ await konsole.print(`You chose: ${selectedOption}`);
 <hr>
 
 ## Kommand
-
 A `Kommand` is a command that can be executed in Konsole. It has the following properties:
 
 | Property | Type | Description |
@@ -170,7 +241,7 @@ A `Kommand` is a command that can be executed in Konsole. It has the following p
 | details | string? | Detailed information about usage/syntax of a kommand. It is shown when `help kommandName` is entered. |
 | action | [KommandAction](#KommandAction) | A function that is executed when user enters the kommand in konsole. |
 
-> Note: All the properties are required except `details` to [Register a Kommand](#registerkommand).
+> Note: All the properties are required except `details` to [add a Kommand](#addkommand).
 
 ### KommandAction
 A function that takes `arg: string` and `konsole: Konsole` as parameters and returns a Promise that resolves after the action is completed. It is executed when the user enters the kommand's name in Konsole.
@@ -180,7 +251,10 @@ let myKommand = new Kommand("clear", "clears the console.", null, (arg:string, k
     new Promise((resolve, reject)=>
     {
         $("#console").html("");
-        resolve();
+        resolve(true);
+
+        // or do this if you have nothing to return
+        // resolve(null) or resolve(undefined);
     })
 );
 ```
@@ -188,7 +262,6 @@ let myKommand = new Kommand("clear", "clears the console.", null, (arg:string, k
 <hr>
 
 ## KonsoleSettings
-
 Configuration object that can be passed to `Konsole`'s constructor.
 
 | Property | Type | Default | Description |
@@ -198,10 +271,9 @@ Configuration object that can be passed to `Konsole`'s constructor.
 | printLetterInterval | int | 25 | The time in ms between each letter when printing. |
 | registerDefaultKommands | bool | true | Whether to register [Default Kommands](#Default-Kommands) or not. |
 | caseSensitiveKommands | bool | true | Weather kommands should be case-sensitive. |
-| invalidKommandMessage | string | "invalid command." | Text to print when no kommand matches the input.
+| invalidKommandMessage | string | "invalid command." | Text to print when no kommand matches the input. |
 
 ### Default Kommands
-
 | Name | Description |
 | ------ | ------ |
 | clear | Empties the Konsole element's html. |
@@ -209,7 +281,6 @@ Configuration object that can be passed to `Konsole`'s constructor.
 
 ### Example
 ```js
-
 let konsole = new Konsole("#console", 
     { 
         prefix: "C:\>",
@@ -220,7 +291,6 @@ let konsole = new Konsole("#console",
 
 await konsole.print("Hello Konsole!");
 
-konsole.awaitKommand();
-
+await konsole.awaitKommand();
 ```
 

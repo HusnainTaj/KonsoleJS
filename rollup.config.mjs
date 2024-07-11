@@ -1,22 +1,20 @@
 import typescript from '@rollup/plugin-typescript';
 
-const pkgname = "konsole";
-
 export default {
   input: 'src/index.ts',
   output: [
     {
-      file: `dist/${pkgname}.js`,
+      file: `dist/konsole.js`,
       format: 'umd',
       name: "Konsole",
     },
     {
-        file: `dist/${pkgname}.common.js`,
+        file: `dist/konsole.cjs`,
         format: 'cjs',
         exports: 'auto',
     },
     {
-        file: `dist/${pkgname}.esm.js`,
+        file: `dist/konsole.mjs`,
         format: 'esm',
     }
   ],

@@ -1,6 +1,4 @@
 [Dd]ist/
 .vscode
 .parcel-cache
-test
 node_modules
-package/dist

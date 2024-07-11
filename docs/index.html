@@ -7,7 +7,8 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
-  <link rel="stylesheet" href="./temp/index.css">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@husnain.taj/konsolejs@1.0.0/dist/konsole.min.css">
   <style>
       #console-cont
       {
@@ -18,11 +19,11 @@
 
       #console
       {
-        --konsole-blur-opacity: 1;
+        --konsole-blur-opacity: 0.95;
 
         border-radius: 10px;
         background-color: #0d0d0d;
-        padding: 30px;
+        padding: 20px;
         min-height: 400px;
         max-height: 400px;
         overflow-y: auto;
@@ -40,12 +41,13 @@
  
   <div id="app"></div>
 
-  <script src="./temp/main.js" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@husnain.taj/konsolejs@1.0.0/dist/konsole.js"></script>
 
   <script>
     window.$docsify = {
       name: 'KonsoleJS',
       repo: 'https://github.com/HusnainTaj/KonsoleJS',
+      search: 'auto', // default
       // themeColor: '#3F51B5',
       coverpage: true,
       plugins:[
@@ -53,12 +55,14 @@
         {
           hook.ready(async function () {
 
-            let konsole = new Konsole("#console");
+            let konsole = new Konsole.Konsole("#console", {focusOnGetInput:false});
 
             await konsole.print("Welcome to the Konsole!");
-            await konsole.print("sadf as <a href='https://exmaple.com' target='_blank'>exmaple</a> asdasd");
+            await konsole.print("Check out the source code <a href='https://github.com/HusnainTaj/KonsoleJS' target='_blank'>here</a>.");
 
-            let r = await konsole.input("What is your name?");
+            if(konsole.settings.animatePrint) await konsole.print("tip: you can skip text animation by pressing space.")
+
+            let r = await konsole.prompt("What is your name?");
 
             await konsole.print("Hello " + r + "! How are you?");
 
@@ -67,7 +71,6 @@
             await konsole.print("Intersting... Try out some other commands!");
 
             await konsole.awaitKommand();
-
           });
         }
       ]
@@ -75,5 +78,7 @@
   </script>
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
 </body>
 </html>

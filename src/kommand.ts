@@ -21,7 +21,7 @@ export const DefaultKommands = [
     new Kommand("clear", "clears the console.", null, (arg, konsole) => {
         return new Promise(async (resolve, reject)=>{
             konsole.elem.innerHTML = "";
-            resolve(true);
+            resolve(null);
         })
     }),
     new Kommand("help", "display all valid commands.", null, async (arg, konsole)=>{
@@ -38,9 +38,7 @@ export const DefaultKommands = [
                 return konsole.print(`'${arg}' is not a valid command.`);
             }
         }
-
-        if(konsole.settings.animatePrint) await konsole.print("tip: you can skip text animation by pressing space.")
-
+        
         let lengthOfLargestKommandName = Math.max(...konsole.kommands.map(k=>k.name.length));
 
         return konsole.print(...konsole.kommands.map(k=>k.name + " ".repeat(lengthOfLargestKommandName - k.name.length) + " - " + k.description));

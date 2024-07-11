@@ -59,10 +59,9 @@
 
         &:last-of-type span.KonsoleLineText
         {
-            border-right: 10px solid var(--konsole-color);
+            border-right: 1em solid var(--konsole-color);
             padding-right: 2px;
             // animation: KaretBlink 800ms steps(2) infinite;
-
         }
     }
 
