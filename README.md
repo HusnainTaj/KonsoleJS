@@ -6,7 +6,7 @@ A JavaScript Library for creating console/terminal UI on the web.
 - Customizable
 
 ### Demo
-Checkout my [Portfolio](https://husnaintaj.github.io/) made using  KonsoleJS
+Checkout my [Portfolio](https://husnain.taj.contact/old/) made using  KonsoleJS
 
 ### Links
 [Documentation](https://husnaintaj.github.io/KonsoleJS)
